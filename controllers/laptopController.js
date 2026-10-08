@@ -1,32 +1,46 @@
-const Model = require('../models/laptopModel');
+const laptopModel = require('../models/laptopModel');
 
-exports.getAll = (req, res) => {
-  res.status(200).json(Model.getAll());
-};
+const laptopController = {
+  getAll: (req, res) => {
+    const laptops = laptopModel.getAll();
+    res.status(200).json(laptops);
+  },
 
-exports.getById = (req, res) => {
-  const item = Model.getById(req.params.id);
-  if (!item) return res.status(404).json({ message: 'Data tidak ditemukan' });
-  res.status(200).json(item);
-};
+  getById: (req, res) => {
+    const { id } = req.params;
+    const laptop = laptopModel.getById(id);
+    if (!laptop) {
+      return res.status(404).json({ message: `Laptop dengan ID ${id} tidak ditemukan` });
+    }
+    res.status(200).json(laptop);
+  },
 
-exports.create = (req, res) => {
-  const { merk, harga } = req.body;
-  if (!merk || !harga) {
-    return res.status(400).json({ message: 'Field merk dan harga wajib diisi' });
+  create: (req, res) => {
+    const { merk, harga } = req.body;
+    if (!merk || !harga) {
+      return res.status(400).json({ message: 'Merk dan harga wajib diisi' });
+    }
+    const laptopBaru = laptopModel.create(req.body);
+    res.status(201).json(laptopBaru);
+  },
+
+  update: (req, res) => {
+    const { id } = req.params;
+    const laptopDiupdate = laptopModel.update(id, req.body);
+    if (!laptopDiupdate) {
+      return res.status(404).json({ message: `Laptop dengan ID ${id} tidak ditemukan` });
+    }
+    res.status(200).json(laptopDiupdate);
+  },
+
+  delete: (req, res) => {
+    const { id } = req.params;
+    const berhasil = laptopModel.delete(id);
+    if (!berhasil) {
+      return res.status(404).json({ message: `Laptop dengan ID ${id} tidak ditemukan` });
+    }
+    res.status(200).json({ message: `Laptop dengan ID ${id} berhasil dihapus` });
   }
-  const dataBaru = Model.create({ merk, harga });
-  res.status(201).json(dataBaru);
 };
 
-exports.update = (req, res) => {
-  const updated = Model.update(req.params.id, req.body);
-  if (!updated) return res.status(404).json({ message: 'Data tidak ditemukan' });
-  res.status(200).json(updated);
-};
-
-exports.delete = (req, res) => {
-  const deleted = Model.delete(req.params.id);
-  if (!deleted) return res.status(404).json({ message: 'Data tidak ditemukan' });
-  res.status(204).send();
-};
+module.exports = laptopController;

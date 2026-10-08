@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/laptopController');
+const laptopController = require('../controllers/laptopController');
 const cekApiKey = require('../middlewares/cekApiKey');
 
-router.get('/', controller.getAll);
-router.get('/:id', controller.getById);
-router.post('/', cekApiKey, controller.create);
-router.put('/:id', cekApiKey, controller.update);
-router.delete('/:id', cekApiKey, controller.delete);
+
+router.get('/', laptopController.getAll);
+router.get('/:id', laptopController.getById);
+
+
+router.post('/', cekApiKey, laptopController.create);
+router.put('/:id', cekApiKey, laptopController.update);
+router.delete('/:id', cekApiKey, laptopController.delete);
 
 module.exports = router;
